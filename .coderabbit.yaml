@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://storage.googleapis.com/coderabbit_public_assets/schema.v2.json
+
+language: en-US
+tone_instructions: "Be concise. Focus on bugs, accessibility, and performance over style nits."
+
+reviews:
+  profile: chill            # "assertive" gives more (and pettier) feedback
+  request_changes_workflow: false
+  high_level_summary: true
+  collapse_walkthrough: true
+
+  auto_review:
+    enabled: true
+    drafts: false
+    ignore_title_keywords: ["WIP", "DO NOT REVIEW"]
+
+  # Skip noise. A "!" prefix excludes; plain globs include.
+  path_filters:
+    - "!**/node_modules/**"
+    - "!dist/**"
+    - "!build/**"
+    - "!coverage/**"
+    - "!**/*.min.js"
+    - "!**/package-lock.json"
+    - "!**/pnpm-lock.yaml"
+    - "!**/yarn.lock"
+    - "!**/*.snap"
+
+  # Your standards, scoped by file path.
+  path_instructions:
+    - path: "src/**/*.{tsx,jsx}"
+      instructions: |
+        - Check hooks rules: no conditional hooks, complete dependency arrays.
+        - Flag missing cleanup in useEffect (listeners, timers, subscriptions).
+        - Flag unnecessary re-renders (inline objects/functions passed to memoized children, missing keys in lists).
+        - Prefer function components; no new class components.
+        - Check accessibility: alt text, labels on inputs, semantic elements, keyboard support.
+        - Never use dangerouslySetInnerHTML without sanitization.
+    - path: "src/hooks/**"
+      instructions: |
+        Custom hooks must be prefixed with "use", be reusable, and not hide side effects.
+    - path: "src/api/**"
+      instructions: |
+        Check error handling, loading states, and that no secrets or tokens are hardcoded.
+    - path: "**/*.{test,spec}.{ts,tsx,js,jsx}"
+      instructions: |
+        Prefer React Testing Library queries by role/label over test IDs.
+        Flag tests that assert implementation details or have no assertions.
+
+chat:
+  auto_reply: true
