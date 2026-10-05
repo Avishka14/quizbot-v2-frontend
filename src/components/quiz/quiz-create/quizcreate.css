@@ -1,0 +1,51 @@
+/* Generate button: black base, blue fades in on hover */
+.qb-generate {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--qb-primary);
+  color: #fff;
+  box-shadow: none;
+  transition: transform 0.2s ease;
+}
+
+.qb-generate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--qb-secondary);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.qb-generate:hover:not(:disabled)::before,
+.qb-generate:focus-visible::before {
+  opacity: 1;
+}
+
+.qb-generate:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Clear button: flat grey, no shadow */
+.qb-clear {
+  background-color: #e5e7eb;
+  color: #4b5563;
+  box-shadow: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.qb-clear:hover {
+  background-color: #d1d5db;
+  color: #1f2937;
+}
+
+/* Focus styles, outline only (no shadows) */
+.qb-input:focus,
+.qb-chip:focus-visible,
+.qb-clear:focus-visible,
+.qb-generate:focus-visible {
+  outline: 2px solid var(--qb-secondary);
+  outline-offset: 2px;
+}

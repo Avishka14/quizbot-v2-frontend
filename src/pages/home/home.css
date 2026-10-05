@@ -1,0 +1,28 @@
+
+@keyframes qb-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.qb-fade-in {
+  opacity: 0;
+  animation: qb-fade-in 0.7s ease-out forwards;
+}
+
+/* Staggered delays so elements appear one after another */
+.qb-delay-1 { animation-delay: 0.2s; }
+.qb-delay-2 { animation-delay: 0.4s; }
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .qb-fade-in {
+    animation: none;
+    opacity: 1;
+  }
+}
