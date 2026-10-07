@@ -2,6 +2,7 @@ import React from 'react'
 import QuizCreate from '../quiz-create/QuizCreate'
 import QuizView from '../quizview/QuizView'
 import HowItWorks from '../how-it-works/HowItWorks'
+import WhyQuizBot from '../why-quizbot/WhyQuizBot'
 
 function QuizMain() {
   return (
@@ -11,10 +12,13 @@ function QuizMain() {
       <QuizView />
     </div>
 
-
     <hr className="mt-12 mb-2" />
     
     <HowItWorks/>
+
+    <hr className="mt-2 mb-2" />
+
+    <WhyQuizBot/>
     
     </>
   )
