@@ -4,7 +4,7 @@ import { Link, NavLink } from 'react-router-dom'
 import './header.css'
 
 const links = [
-  { label: 'Generate', to: '/generate' },
+  { label: 'Generate', to: '/' },
   { label: 'History', to: '/history' },
   { label: 'Pricing', to: '/pricing' },
   { label: 'About', to: '/about' },
