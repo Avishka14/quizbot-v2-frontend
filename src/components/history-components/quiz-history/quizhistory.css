@@ -1,0 +1,31 @@
+/* Fade-in animation for QuizHistory */
+
+@keyframes qb-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+  Usage:
+    .qb-fade-in                   -> fades in immediately
+    style={{ '--qb-delay': '1' }} -> staggers by 80ms per step
+*/
+.qb-fade-in {
+  opacity: 0; /* start hidden; the animation's final keyframe makes it visible */
+  animation: qb-fade-in 0.5s ease-out forwards;
+  animation-delay: calc(var(--qb-delay, 0) * 80ms);
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .qb-fade-in {
+    opacity: 1;
+    animation: none;
+  }
+}
