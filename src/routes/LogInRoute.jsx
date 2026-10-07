@@ -7,7 +7,7 @@ function LogInRoute() {
 
   const handleGoogleLogin = async () => {
     // Will be implemented in the future when we add Google login functionality
-    navigate('/generate')
+    navigate('/')
   }
 
   const handleCancel = () => {

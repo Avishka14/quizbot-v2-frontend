@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import './NotFound.css'
+import './notfound.css'
 
 
 const PRIMARY = 'var(--qb-primary)'   
