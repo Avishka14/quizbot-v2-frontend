@@ -33,3 +33,77 @@
     animation: none;
   }
 }
+
+
+
+/* LogInRequired: page fade in / fade out + padlock animations */
+
+@keyframes lr-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lr-fade-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+/* Padlock: the shackle lifts slightly and settles, like it is being tested */
+@keyframes lr-shackle {
+  0%, 60%, 100% { transform: translateY(0) rotate(0deg); }
+  70%           { transform: translateY(-4px) rotate(-6deg); }
+  80%           { transform: translateY(-4px) rotate(5deg); }
+  90%           { transform: translateY(0) rotate(0deg); }
+}
+
+/* Whole lock sways gently */
+@keyframes lr-sway {
+  0%, 100% { transform: rotate(-3deg); }
+  50%      { transform: rotate(3deg); }
+}
+
+@keyframes lr-pulse {
+  0%, 100% { opacity: 0.15; }
+  50%      { opacity: 0.4; }
+}
+
+.lr-page {
+  animation: lr-fade-in 450ms ease-out both;
+}
+
+.lr-leaving {
+  animation: lr-fade-out 300ms ease-in forwards;
+  pointer-events: none;
+}
+
+.lr-lock {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: lr-sway 5s ease-in-out infinite;
+}
+
+.lr-shackle {
+  transform-box: fill-box;
+  transform-origin: 100% 100%;
+  animation: lr-shackle 4s ease-in-out infinite;
+}
+
+.lr-glow {
+  animation: lr-pulse 3s ease-in-out infinite;
+}
+
+/* Staggered entrance for the text block */
+.lr-rise {
+  animation: lr-fade-in 450ms ease-out both;
+  animation-delay: 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lr-page,
+  .lr-rise,
+  .lr-lock,
+  .lr-shackle,
+  .lr-glow {
+    animation: none;
+  }
+}
