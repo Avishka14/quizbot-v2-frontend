@@ -7,7 +7,7 @@ const links = [
   { label: 'Generate', to: '/' },
   { label: 'History', to: '/history' },
   { label: 'Pricing', to: '/pricing' },
-  { label: 'About', to: '/about' },
+  { label: 'How It Works', to: '/how' },
   { label: 'Account', to: '/login' },
 ]
 
