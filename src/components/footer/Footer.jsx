@@ -5,7 +5,7 @@ const NAV_LINKS = [
   { label: 'Generate', href: '/generate' },
   { label: 'History', href: '/history' },
   { label: 'Pricing', href: '/pricing' },
-  { label: 'About', href: '/about' },
+  { label: 'How It Works', href: '/how' },
   { label: 'Account', href: '/account' },
 ]
 

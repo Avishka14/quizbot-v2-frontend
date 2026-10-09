@@ -5,7 +5,7 @@ import LogIn from '../pages/login/LogIn'
 import NotFound from '../pages/not-found/NotFound'
 import History from '../pages/history/History'
 import Pricing from '../pages/pricing/Pricing'
-import About from '../pages/about/About'
+import HowItWorks from '../pages/how-it-works/HowItWorks'
 
 function AppRoutes() {
   return (
@@ -14,7 +14,7 @@ function AppRoutes() {
       <Route path="/login" element={<LogIn/>} />
       <Route path="/history" element={<History/>} />
       <Route path="/pricing" element={<Pricing/>} />
-      <Route path="/about" element={<About/>} />
+      <Route path="/how" element={<HowItWorks/>} />
       <Route path="*" element={<NotFound/>} />
     </Routes>
   )
