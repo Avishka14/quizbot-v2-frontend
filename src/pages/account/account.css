@@ -1,0 +1,72 @@
+/* ---------- Keyframes ---------- */
+@keyframes qb-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes qb-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+/* ---------- Animation classes ---------- */
+.qb-fade-in {
+  opacity: 0;
+  animation: qb-fade-in 0.5s ease-out forwards;
+}
+
+/* Used on the page wrapper when leaving (e.g. on logout) */
+.qb-fade-out {
+  animation: qb-fade-out 0.4s ease-in forwards;
+}
+
+/* Staggered entrance for child elements */
+.qb-delay-1 {
+  animation-delay: 0.1s;
+}
+.qb-delay-2 {
+  animation-delay: 0.2s;
+}
+.qb-delay-3 {
+  animation-delay: 0.3s;
+}
+
+/* ---------- Logout button ---------- */
+.qb-logout {
+  background-color: #fef2f2;
+  color: #dc2626;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.qb-logout:hover:not(:disabled) {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.qb-logout:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
+/* ---------- Reduced motion ----------
+   Keep a near-instant duration (not "none") so animationend
+   still fires and the logout callback runs. */
+@media (prefers-reduced-motion: reduce) {
+  .qb-fade-in,
+  .qb-fade-out {
+    animation-duration: 0.01ms;
+    animation-delay: 0s;
+  }
+}
