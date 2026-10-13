@@ -79,7 +79,7 @@ function Footer() {
       </div>
 
       <p className="qb-footer__copy qb-fade-in">
-        © {new Date().getFullYear()} QuizBot. All rights reserved. 
+        © {new Date().getFullYear()} QuizBot. All rights reserved.
       </p>
     </footer>
   )

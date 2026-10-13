@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import './quizcreate.css'
+import { generateQuiz } from '../../../api/quizApi'
 
 const DIFFICULTIES = ['Easy', 'Medium', 'Hard']
 const QUESTION_COUNTS = [5, 10, 15, 20]
@@ -43,6 +44,9 @@ function OptionGroup({ label, options, value, onChange }) {
 
 function QuizCreate({ onGenerate }) {
   const [form, setForm] = useState(INITIAL_FORM)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const isSubmittingRef = useRef(false) // synchronous guard against double submits
 
   // Derived value, no useEffect/extra state needed
   const canGenerate = form.topic.trim().length > 0
@@ -50,10 +54,27 @@ function QuizCreate({ onGenerate }) {
   const updateField = (field) => (value) =>
     setForm((prev) => ({ ...prev, [field]: value }))
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!canGenerate) return
-    onGenerate?.({ ...form, topic: form.topic.trim() })
+    if (isSubmittingRef.current) return // prevent double submit
+   
+    isSubmittingRef.current = true
+    setLoading(true)
+    setError(null)
+
+    try {
+      const quiz = await generateQuiz({ ...form, topic: form.topic.trim() })
+      onGenerate?.(quiz) // pass the result up to the parent
+    } catch (err) {
+      console.error('Error generating quiz:', err)
+      setError(
+        err.response?.data?.message || 'Failed to generate quiz. Please try again.'
+      )
+    } finally {
+      isSubmittingRef.current = false
+      setLoading(false)
+    }
   }
 
   return (
@@ -93,18 +114,23 @@ function QuizCreate({ onGenerate }) {
           onChange={updateField('count')}
         />
 
+        {error && (
+          <p role="alert" className="text-sm text-red-600">{error}</p>
+        )}
+
         <div className="flex gap-3">
           <button
             type="submit"
             disabled={!canGenerate}
             className="qb-generate flex-1 rounded-2xl px-6 py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Generate
+            {loading ? 'Generating...' : 'Generate'}
           </button>
 
           <button
             type="button"
-            onClick={() => setForm(INITIAL_FORM)}
+            disabled={loading}
+            onClick={() => { setForm(INITIAL_FORM); setError(null) }}
             className="qb-clear flex-1 rounded-2xl px-6 py-3 text-sm font-semibold"
           >
             Clear

@@ -17,8 +17,10 @@
   animation-delay: calc(var(--qb-i, 0) * 80ms);
 }
 
-/* ---------- Footer ---------- */
+/* ---------- Footer (normal flow, at the end of the page) ---------- */
 .qb-footer {
+  width: 100%;
+  box-sizing: border-box;
   background-color: var(--qb-secondary); /* solid secondary */
   color: #ffffff;
   padding: 2.5rem 1.5rem 1.5rem;
