@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import './quizcreate.css'
 import { generateQuiz } from '../../../api/quizApi'
 
@@ -46,6 +46,7 @@ function QuizCreate({ onGenerate }) {
   const [form, setForm] = useState(INITIAL_FORM)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const isSubmittingRef = useRef(false) // synchronous guard against double submits
 
   // Derived value, no useEffect/extra state needed
   const canGenerate = form.topic.trim().length > 0
@@ -56,8 +57,9 @@ function QuizCreate({ onGenerate }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!canGenerate) return
-    if (!canGenerate) return
-
+    if (isSubmittingRef.current) return // prevent double submit
+   
+    isSubmittingRef.current = true
     setLoading(true)
     setError(null)
 
@@ -70,6 +72,7 @@ function QuizCreate({ onGenerate }) {
         err.response?.data?.message || 'Failed to generate quiz. Please try again.'
       )
     } finally {
+      isSubmittingRef.current = false
       setLoading(false)
     }
   }
