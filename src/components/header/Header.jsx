@@ -8,7 +8,7 @@ const links = [
   { label: 'History', to: '/history' },
   { label: 'Pricing', to: '/pricing' },
   { label: 'How It Works', to: '/how' },
-  { label: 'Account', to: '/login' },
+  { label: 'Account', to: '/account' },
 ]
 
 function Header() {

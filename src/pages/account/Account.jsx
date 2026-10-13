@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import './account.css'
 import Header from '../../components/header/Header'
 import Footer from '../../components/footer/Footer'
@@ -103,17 +103,25 @@ function Account() {
     )
   }
 
-  if (isError) {
-    return (
-      <>
-        <Header />
-        <p className="p-8 text-center text-gray-500">
+if (isError) {
+  return (
+    <>
+      <Header />
+      <div className="flex flex-col items-center gap-4 p-8 text-center">
+        <p className="text-gray-500">
           We couldn't load your account. Please refresh and try again.
         </p>
-        <Footer />
-      </>
-    )
-  }
+        <Link
+          to="/login"
+          className="rounded-2xl bg-[var(--qb-primary)] px-6 py-3 text-sm font-semibold text-white"
+        >
+          Log in
+        </Link>
+      </div>
+      <Footer />
+    </>
+  )
+}
 
   // Not logged in (401 -> null from useUser)
   if (!user) return <Navigate to="/login" replace />
