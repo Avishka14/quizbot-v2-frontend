@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
 import './account.css'
 import Header from '../../components/header/Header'
 import Footer from '../../components/footer/Footer'
+import { useUser, useLogout } from '../../hooks/userUser'
 
 function Avatar({ src, name }) {
   const [failed, setFailed] = useState(false)
@@ -26,7 +28,7 @@ function Avatar({ src, name }) {
       alt={`${name}'s profile`}
       referrerPolicy="no-referrer"
       onError={() => setFailed(true)}
-      className="h-28 w-28 rounded-full object-cover shadow-md"
+      className="h-28 w-28 rounded-full border-4 border-white object-cover shadow-md"
     />
   )
 }
@@ -46,7 +48,7 @@ function SecurityNote() {
   return (
     <aside
       aria-labelledby="account-security-title"
-      className="qb-fade-in qb-delay-2 space-y-3 rounded-2xl bg-gray-50 p-5"
+      className="qb-fade-in qb-delay-2 space-y-3 rounded-2xl border border-gray-200 bg-gray-50 p-5"
     >
       <h2
         id="account-security-title"
@@ -70,38 +72,73 @@ function SecurityNote() {
   )
 }
 
-function Account({ user, onLogout }) {
+function Account() {
+  const { data: user, isLoading, isError } = useUser()
+  const logout = useLogout()
+  const navigate = useNavigate()
   const [isLeaving, setIsLeaving] = useState(false)
-
-  const { name = 'Guest User', email = '', photoURL = '' } = user ?? {}
 
   const handleLogout = () => setIsLeaving(true)
 
   // Wait for the fade-out to finish before actually logging out
-  const handleAnimationEnd = (e) => {
-    if (isLeaving && e.target === e.currentTarget) onLogout?.()
+  const handleAnimationEnd = async (e) => {
+    if (isLeaving && e.target === e.currentTarget) {
+      try {
+        await logout()
+        navigate('/', { replace: true })
+      } catch {
+        // Logout failed: let the user try again
+        setIsLeaving(false)
+      }
+    }
   }
 
+  if (isLoading) {
+    return (
+      <>
+        <Header />
+        <p className="p-8 text-center text-gray-500">Loading your account…</p>
+        <Footer />
+      </>
+    )
+  }
+
+  if (isError) {
+    return (
+      <>
+        <Header />
+        <p className="p-8 text-center text-gray-500">
+          We couldn't load your account. Please refresh and try again.
+        </p>
+        <Footer />
+      </>
+    )
+  }
+
+  // Not logged in (401 -> null from useUser)
+  if (!user) return <Navigate to="/login" replace />
+
+  const { name, email, pictureUrl } = user
+
   return (
-    <div className="flex min-h-screen flex-col">
+    <>
       <Header />
 
-      {/* flex-1 fills the space between Header and Footer; the card is centered in it */}
-      <main className="flex flex-1 items-center justify-center px-4 py-8">
-        <section
-          onAnimationEnd={handleAnimationEnd}
-          className={`w-full max-w-lg space-y-8 bg-white p-6 sm:p-8 ${
-            isLeaving ? 'qb-fade-out' : 'qb-fade-in'
-          }`}
-        >
+      <section
+        onAnimationEnd={handleAnimationEnd}
+        className={`flex w-full items-stretch justify-center px-4 py-10 ${
+          isLeaving ? 'qb-fade-out' : 'qb-fade-in'
+        }`}
+      >
+        <div className="w-full max-w-lg space-y-8 rounded-3xl border border-gray-200 bg-white p-6 sm:p-8">
           <header className="qb-fade-in flex flex-col items-center gap-4 text-center">
-            <Avatar src={photoURL} name={name} />
+            <Avatar src={pictureUrl} name={name} />
             <h1 className="text-xl font-semibold text-[var(--qb-primary)]">
               {name}
             </h1>
           </header>
 
-          <dl className="qb-fade-in qb-delay-1 space-y-5 rounded-2xl bg-gray-50 p-5">
+          <dl className="qb-fade-in qb-delay-1 space-y-5 rounded-2xl border border-gray-200 p-5">
             <InfoRow label="Name" value={name} />
             <InfoRow label="Email" value={email || 'Not available'} />
           </dl>
@@ -116,11 +153,11 @@ function Account({ user, onLogout }) {
           >
             Log Out
           </button>
-        </section>
-      </main>
+        </div>
+      </section>
 
       <Footer />
-    </div>
+    </>
   )
 }
 
