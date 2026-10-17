@@ -53,6 +53,7 @@ function QuizCreate({ onGenerate }) {
 
   const updateField = (field) => (value) =>
     setForm((prev) => ({ ...prev, [field]: value }))
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault()
