@@ -66,6 +66,7 @@ function QuizCreate({ onGenerate }) {
 
     try {
       const quiz = await generateQuiz({ ...form, topic: form.topic.trim() })
+      console.log('1. quiz from API:', quiz)
       onGenerate?.(quiz) // pass the result up to the parent
     } catch (err) {
       console.error('Error generating quiz:', err)
