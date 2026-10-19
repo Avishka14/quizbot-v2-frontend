@@ -7,6 +7,6 @@ export const generateQuiz = async ({ topic, difficulty, count }) => {
     questionCount: count,                
   }
 
-  const { data } = await api.post('/quiz/getquiz', payload)
-  return data
+  const res = await api.post('/quiz/getquiz', payload)
+  return res.data
 }
