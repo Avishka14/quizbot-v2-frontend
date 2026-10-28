@@ -42,7 +42,7 @@ function OptionGroup({ label, options, value, onChange }) {
   )
 }
 
-function QuizCreate({ onGenerate }) {
+function QuizCreate({ onGenerate, onClear}) {
   const [form, setForm] = useState(INITIAL_FORM)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -132,7 +132,11 @@ function QuizCreate({ onGenerate }) {
           <button
             type="button"
             disabled={loading}
-            onClick={() => { setForm(INITIAL_FORM); setError(null) }}
+            onClick={() => { 
+              setForm(INITIAL_FORM) 
+              setError(null)
+              onClear?.()
+             }}
             className="qb-clear flex-1 rounded-2xl px-6 py-3 text-sm font-semibold"
           >
             Clear
