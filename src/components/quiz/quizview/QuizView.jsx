@@ -1,11 +1,12 @@
 import { useState } from 'react'
 
-function QuizView({ quiz }) {
+function QuizView({ quiz, onComplete }) {
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState(null)
   const [submitted, setSubmitted] = useState(false)
   const [score, setScore] = useState(0)
   const [finished, setFinished] = useState(false)
+  const [answers, setAnswers] = useState([]) 
 
   const questions = quiz?.questions ?? []
   const question = questions[current]
@@ -14,12 +15,27 @@ function QuizView({ quiz }) {
   const handleSubmit = () => {
     if (selected === null || submitted) return
     setSubmitted(true)
-    if (selected === question.correctAnswer) setScore((s) => s + 1)
+   
+    const isCorrect = selected === question.correctAnswer
+    if (isCorrect) setScore((s) => s + 1)
+
+    setAnswers((prev) => [
+      ...prev,
+      {
+        questionId: question.id,
+        correctAnswer: question.correctAnswer,
+        userAnswer: selected,
+        isCorrect,
+      },
+    ])  
+
+
   }
 
   const handleNext = () => {
     if (isLast) {
       setFinished(true)
+      onComplete?.({ quizId: quiz.id, topic: quiz.topic, score, total: questions.length, answers })
       return
     }
     setCurrent((c) => c + 1)
@@ -32,6 +48,7 @@ function QuizView({ quiz }) {
     setSelected(null)
     setSubmitted(false)
     setScore(0)
+    setAnswers([])
     setFinished(false)
   }
 
