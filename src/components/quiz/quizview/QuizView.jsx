@@ -1,12 +1,12 @@
 import { useState } from 'react'
+import QuizResult from '../quiz-result/QuizResult' // adjust to where you put QuizResult.jsx
 
-function QuizView({ quiz, onComplete }) {
+function QuizView({ quiz, submission, onFinish, onRestart }) {
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState(null)
   const [submitted, setSubmitted] = useState(false)
-  const [score, setScore] = useState(0)
   const [finished, setFinished] = useState(false)
-  const [answers, setAnswers] = useState([]) 
+  const [answers, setAnswers] = useState([])
 
   const questions = quiz?.questions ?? []
   const question = questions[current]
@@ -15,9 +15,6 @@ function QuizView({ quiz, onComplete }) {
   const handleSubmit = () => {
     if (selected === null || submitted) return
     setSubmitted(true)
-   
-    const isCorrect = selected === question.correctAnswer
-    if (isCorrect) setScore((s) => s + 1)
 
     setAnswers((prev) => [
       ...prev,
@@ -25,17 +22,15 @@ function QuizView({ quiz, onComplete }) {
         questionId: question.id,
         correctAnswer: question.correctAnswer,
         userAnswer: selected,
-        isCorrect,
+        isCorrect: selected === question.correctAnswer,
       },
-    ])  
-
-
+    ])
   }
 
   const handleNext = () => {
     if (isLast) {
       setFinished(true)
-      onComplete?.({ quizId: quiz.id, topic: quiz.topic, score, total: questions.length, answers })
+      onFinish?.(answers) // parent submits to the server
       return
     }
     setCurrent((c) => c + 1)
@@ -47,9 +42,9 @@ function QuizView({ quiz, onComplete }) {
     setCurrent(0)
     setSelected(null)
     setSubmitted(false)
-    setScore(0)
     setAnswers([])
     setFinished(false)
+    onRestart?.() // parent clears result/error/loading
   }
 
   // Option colour: after submit, correct answer -> green, picked wrong answer -> red
@@ -76,21 +71,11 @@ function QuizView({ quiz, onComplete }) {
             Generated Quizzes will appear here
           </h3>
         ) : finished ? (
-          <div className="space-y-4 text-center">
-            <h3 className="text-lg font-bold text-[var(--qb-primary)]">
-              Quiz Complete
-            </h3>
-            <p className="text-3xl font-bold text-[var(--qb-secondary)]">
-              {score} / {questions.length}
-            </p>
-            <button
-              type="button"
-              onClick={handleRestart}
-              className="w-full rounded-2xl border border-[var(--qb-secondary)] px-6 py-3 text-sm font-semibold text-[var(--qb-secondary)]"
-            >
-              Try Again
-            </button>
-          </div>
+          <QuizResult
+            submission={submission}
+            onRetry={() => onFinish?.(answers)}
+            onRestart={handleRestart}
+          />
         ) : (
           <>
             <div className="flex items-center justify-between text-xs text-gray-500">
