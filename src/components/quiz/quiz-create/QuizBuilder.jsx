@@ -1,34 +1,37 @@
 import { useState } from 'react'
 import QuizCreate from '../quiz-create/QuizCreate'
 import QuizView from '../quizview/QuizView'
-import { submitQuizResult } from '../../../api/quizApi'
+import { useSubmitQuiz } from '../../../hooks/useSubmitQuiz'
 
 function QuizBuilder() {
   const [quiz, setQuiz] = useState(null)
-  const [quizId, setQuizId] = useState(0)
+  const [quizKey, setQuizKey] = useState(0)
+  const { result, loading, error, submit, reset } = useSubmitQuiz()
 
   const handleGenerate = (newQuiz) => {
-    console.log('2. QuizBuilder got:', newQuiz)
+    reset()
     setQuiz(newQuiz)
-    setQuizId((id) => id + 1) // new key = QuizView remounts with fresh state
+    setQuizKey((k) => k + 1)
   }
 
-  const handleClear = () => setQuiz(null)
-
-  const handleComplete = async (result) => {
-
-    try{
-      await submitQuizResult(result)
-    }catch(err){
-      console.error('Error submitting quiz result:', err)
-    }
-
+  const handleClear = () => {
+    reset()
+    setQuiz(null)
   }
+
+  // Also used for retry, since QuizView passes its answers again
+  const handleFinish = (answers) => submit({ quizId: quiz.id, answers })
 
   return (
     <div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2">
       <QuizCreate onGenerate={handleGenerate} onClear={handleClear} />
-      <QuizView key={quizId} quiz={quiz} onComplete={handleComplete}/>
+      <QuizView
+        key={quizKey}
+        quiz={quiz}
+        submission={{ result, loading, error }}
+        onFinish={handleFinish}
+        onRestart={reset}
+      />
     </div>
   )
 }
