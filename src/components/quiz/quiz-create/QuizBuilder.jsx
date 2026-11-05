@@ -19,7 +19,7 @@ function QuizBuilder() {
     setQuiz(null)
   }
 
-  // Also used for retry, since QuizView passes its answers again
+
   const handleFinish = (answers) => submit({ quizId: quiz.id, answers })
 
   return (
