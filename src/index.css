@@ -7,3 +7,13 @@
   font-family: "League Spartan", sans-serif;
 }
 
+.ios-toast {
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+  font-weight: 500;
+  padding: 14px 18px !important;
+}

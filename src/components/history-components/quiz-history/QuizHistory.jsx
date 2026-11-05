@@ -1,135 +1,142 @@
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import { getQuizHistory } from '../../../api/quizApi'
+import QuizHistoryItem from './QuizHistoryItem'
 import './quizhistory.css'
 
-const PLACEHOLDER = '—'
 
-// Safely formats a date; falls back to the raw value or a placeholder.
-function formatDate(value) {
-  if (!value) return PLACEHOLDER
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return String(value)
-  return date.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+function toSeconds(time) {
+  if (!time) return 0
+  const parts = String(time).split(':').map(Number)
+  if (parts.some(Number.isNaN)) return 0
+  return parts.reduce((acc, n) => acc * 60 + n, 0)
 }
 
-function StatCard({ label, value, delay }) {
+function formatTotalTime(seconds) {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  if (h > 0) return `${h}h ${m}m`
+  if (m > 0) return `${m}m`
+  return `${seconds}s`
+}
+
+function Stat({ label, value, delay }) {
   return (
     <div
-      className="qb-fade-in rounded-2xl border border-gray-200 bg-white p-4"
+      className="qb-fade-in rounded-2xl bg-white p-4 shadow-sm"
       style={{ '--qb-delay': delay }}
     >
-      <dt className="text-xs font-medium uppercase tracking-wide text-gray-500">
-        {label}
-      </dt>
-      <dd className="mt-1 text-lg font-semibold text-[var(--qb-primary)]">
+      <p className="text-xs font-medium text-gray-500">{label}</p>
+      <p className="mt-1 text-2xl font-semibold tracking-tight text-gray-900">
         {value}
-      </dd>
+      </p>
     </div>
   )
 }
 
-function AnswerItem({ index, title, answer }) {
-  return (
-    <li
-      className="qb-fade-in rounded-2xl border border-gray-200 bg-white p-5"
-      style={{ '--qb-delay': index + 4 }}
-    >
-      <div className="flex items-start gap-4">
-        <span
-          aria-hidden="true"
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--qb-secondary)] text-sm font-semibold text-white"
-        >
-          {index + 1}
-        </span>
+function QuizHistory() {
+  const [attempts, setAttempts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
-        <div className="min-w-0 flex-1 space-y-2">
-          <h3 className="text-base font-semibold text-[var(--qb-primary)]">
-            {title || 'Untitled question'}
-          </h3>
-          <p className="text-sm text-gray-600">
-            <span className="font-medium text-[var(--qb-secondary)]">
-              Your answer:{' '}
-            </span>
-            {answer || 'No answer provided'}
-          </p>
-        </div>
-      </div>
-    </li>
-  )
-}
+  const load = () => {
+    setLoading(true)
+    setError(false)
 
-/**
- * Displays the details of a single completed quiz attempt.
- *
- * attempt shape:
- * {
- *   takenBy?: string,
- *   date?: string | number | Date,
- *   marks?: string | number,
- *   totalMarks?: string | number,
- *   totalTime?: string,
- *   answers?: Array<{ id: string | number, title: string, answer: string }>
- * }
- */
-function QuizHistory({ attempt = {} }) {
-  const {
-    takenBy = 'You',
-    date,
-    marks,
-    totalMarks,
-    totalTime,
-    answers = [],
-  } = attempt
+    const request = getQuizHistory()
 
-  // Derived values: computed during render, no extra state or effects needed
-  const marksLabel =
-    marks == null
-      ? PLACEHOLDER
-      : totalMarks == null
-        ? String(marks)
-        : `${marks} / ${totalMarks}`
+    toast.promise(request, {
+      loading: 'Loading your quiz history…',
+      success: (data) => `Loaded ${data.length} quiz${data.length === 1 ? '' : 'zes'}`,
+      error: 'Could not load quiz history',
+    })
+
+    return request
+      .then((data) => {
+        const sorted = [...data].sort((a, b) =>
+          String(b.createdDate).localeCompare(String(a.createdDate))
+        )
+        setAttempts(sorted)
+      })
+      .catch(() => setError(true))
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    load()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Dashboard numbers
+  const percents = attempts.map((a) => {
+    const total = a.questionAnswerList?.length || 0
+    return total ? (Number(a.marks) / total) * 100 : 0
+  })
+  const average = percents.length
+    ? Math.round(percents.reduce((s, p) => s + p, 0) / percents.length)
+    : 0
+  const best = percents.length ? Math.round(Math.max(...percents)) : 0
+  const totalSeconds = attempts.reduce((s, a) => s + toSeconds(a.takenTime), 0)
 
   return (
-    <section className="w-full max-w-2xl space-y-6 rounded-3xl border border-gray-200 bg-white p-6 sm:p-8">
-      <header className="qb-fade-in space-y-1">
-        <p className="text-sm font-medium text-[var(--qb-secondary)]">
-          Quiz history
-        </p>
-        <h2 className="text-2xl font-bold text-[var(--qb-primary)]">
-          Quiz taken by {takenBy}
-        </h2>
+    <section className="qh-root mx-auto w-full max-w-4xl space-y-5 rounded-3xl bg-[#F2F2F7] p-4 sm:p-6">
+      <header className="px-1">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">History</h1>
+        <p className="text-sm text-gray-500">Your past quizzes at a glance</p>
       </header>
 
-      <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <StatCard label="Date" value={formatDate(date)} delay={1} />
-        <StatCard label="Marks" value={marksLabel} delay={2} />
-        <StatCard label="Total time" value={totalTime || PLACEHOLDER} delay={3} />
-      </dl>
+      {loading && (
+        <div className="grid gap-3 md:grid-cols-2">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="h-20 animate-pulse rounded-2xl bg-white" />
+          ))}
+        </div>
+      )}
 
-      <div className="space-y-3">
-        <h3 className="qb-fade-in text-base font-semibold text-[var(--qb-primary)]">
-          Questions and answers
-        </h3>
+      {!loading && error && (
+        <div className="space-y-3 rounded-2xl bg-white p-8 text-center shadow-sm">
+          <p className="text-sm text-gray-600">Something went wrong.</p>
+          <button
+            type="button"
+            onClick={load}
+            className="rounded-full bg-[#007AFF] px-5 py-2 text-sm font-semibold text-white active:opacity-80"
+          >
+            Try again
+          </button>
+        </div>
+      )}
 
-        {answers.length === 0 ? (
-          <p className="qb-fade-in rounded-2xl border border-dashed border-gray-300 p-6 text-center text-sm text-gray-500">
-            No answers were recorded for this quiz.
-          </p>
-        ) : (
-          <ul className="space-y-3">
-            {answers.map((item, index) => (
-              <AnswerItem
-                key={item.id ?? index}
-                index={index}
-                title={item.title}
-                answer={item.answer}
+      {!loading && !error && attempts.length === 0 && (
+        <p className="rounded-2xl bg-white p-8 text-center text-sm text-gray-500 shadow-sm">
+          You haven't taken any quizzes yet.
+        </p>
+      )}
+
+      {!loading && !error && attempts.length > 0 && (
+        <>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <Stat label="Quizzes" value={attempts.length} delay={0} />
+            <Stat label="Average" value={`${average}%`} delay={1} />
+            <Stat label="Best" value={`${best}%`} delay={2} />
+            <Stat label="Total time" value={formatTotalTime(totalSeconds)} delay={3} />
+          </div>
+
+          <h2 className="px-1 pt-1 text-sm font-semibold uppercase tracking-wide text-gray-500">
+            Recent quizzes
+          </h2>
+
+          <div className="grid items-start gap-3 lg:grid-cols-2">
+            {attempts.map((attempt, i) => (
+              <QuizHistoryItem
+                key={attempt.id}
+                attempt={attempt}
+                number={attempts.length - i}
+                delay={Math.min(i, 8) + 4}
               />
             ))}
-          </ul>
-        )}
-      </div>
+          </div>
+        </>
+      )}
     </section>
   )
 }

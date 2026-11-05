@@ -28,3 +28,8 @@ export const submitQuizResult = async ({ quizId, answers }) => {
   const res = await api.post('/quiz/getmarks', payload)
   return res.data
 }
+
+export const getQuizHistory = async () => {
+  const res = await api.get('/quiz/quiz-history') 
+  return res.data
+}
