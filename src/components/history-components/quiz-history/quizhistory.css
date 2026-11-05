@@ -29,3 +29,15 @@
     animation: none;
   }
 }
+
+
+.qh-root {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+}
+
+.qh-press {
+  transition: background-color 0.15s ease;
+}
+.qh-press:active {
+  background-color: rgba(0, 0, 0, 0.04);
+}
