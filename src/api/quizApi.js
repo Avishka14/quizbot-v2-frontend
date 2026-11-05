@@ -13,10 +13,14 @@ export const generateQuiz = async ({ topic, difficulty, count }) => {
 
 
 export const submitQuizResult = async ({ quizId, answers }) => {
+
+  console.log('Submitting quiz result:', { quizId, answers })
+
   const payload = {
     quizId,
-    questionsDTOS: answers.map(({ questionId, userAnswer }) => ({
+    questionsDTOS: answers.map(({ questionId, userAnswer , correctAnswer}) => ({
       questionId,
+      correctAnswer,
       userAnswer,
     })),
   }
