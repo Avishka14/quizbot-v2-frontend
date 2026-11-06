@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import './account.css'
 import Header from '../../components/header/Header'
 import Footer from '../../components/footer/Footer'
-import { useUser, useLogout } from '../../hooks/userUser'
+import { useUser, useLogout } from '../../api/userUser'
 
 function Avatar({ src, name }) {
   const [failed, setFailed] = useState(false)
