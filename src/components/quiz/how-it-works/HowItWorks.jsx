@@ -1,7 +1,4 @@
 import React from 'react'
-import Step01Image from "../../../assets/images/home-images/step_1.jpg";
-import Step02Image from "../../../assets/images/home-images/step_2.jpg";
-import Step03Image from "../../../assets/images/home-images/step_3.jpg";
 import "./howitworks.css"; 
 
 
@@ -12,21 +9,21 @@ const STEPS = [
     description:
       "Type in any subject you would like to be quizzed on. The more specific you are, the more focused your quiz will be.",
     example: "Nuclear Technology, Java, Sri Lanka",
-    image: Step01Image,
+    image: "/images/home-images/step_1.jpg",
   },
   {
     id: 2,
     title: "Generate Your Quiz",
     description:
       "Your topic is sent to our AI model, which instantly creates a custom quiz tailored just for you.",
-    image: Step02Image,
+    image: "/images/home-images/step_2.jpg",
   },
   {
     id: 3,
     title: "Submit and Improve",
     description:
       "Answer the questions, submit your responses, and review your results to strengthen your knowledge.",
-    image: Step03Image,
+    image: "/images/home-images/step_3.jpg",
   },
 ];
 
