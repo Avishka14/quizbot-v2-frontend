@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import './logIn.css'
+import './login.css'
 
 function GoogleIcon() {
   return (
